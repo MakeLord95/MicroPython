@@ -4,7 +4,7 @@ from machine import Pin, I2C
 
 
 # Interrupt handler
-def interrupt_handler():
+def interrupt_handler(pin):
     for led in leds:
         led.off()
 
@@ -60,17 +60,33 @@ if __name__ == '__main__':
     # Create an array for button toggle function
     button_held = [False, False, False]
 
+    # Create the interrupt for rotary button
     rotary_btn.irq(handler=interrupt_handler, trigger=Pin.IRQ_FALLING)
+
+    # Update the oled
     update_oled()
 
+    # Create an array to keep track of led statuses
+    led_status = [False, False, False]
+
     while True:
-        for i, button in enumerate(buttons):
-            if button.value() == 0 and not button_held[i]:
+        for i in range(3):
+
+            # If button is pressed and button_held index is False
+            if buttons[i].value() == 0 and not button_held[i]:
+
+                led_status[i] = True
                 button_held[i] = True
                 leds[i].toggle()
                 update_oled()
 
-            elif button.value() == 1 and button_held[i]:
+            # If button is not pressed and button_held index is True
+            elif buttons[i].value() == 1 and button_held[i]:
                 button_held[i] = False
+
+            # If led_status index is true but led itself is off
+            if led_status[i] == True and leds[i].value() == 0:
+                led_status[i] = False
+                update_oled()
 
         time.sleep(0.05)
