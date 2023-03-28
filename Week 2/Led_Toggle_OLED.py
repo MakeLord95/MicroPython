@@ -5,18 +5,22 @@ from machine import Pin, I2C
 
 # Interrupt handler
 def interrupt_handler(pin):
+    # Turn all leds off
     for led in leds:
         led.off()
-
+    
+    # set all button_held indexes to False
     for x in button_held:
         button_held[x] = False
 
 
 # Function to update OLED
 def update_oled():
+    
+    # Clear OLED
     oled.fill(0)
-    oled.show()
-
+    
+    # Set the LED status to either on or off depending on the led state
     leds_status = ['ON' if led.value() == 1 else 'OFF' for led in leds]
 
     oled.text('LED1 Status:', 1, 1)
@@ -62,28 +66,26 @@ if __name__ == '__main__':
 
     # Create the interrupt for rotary button
     rotary_btn.irq(handler=interrupt_handler, trigger=Pin.IRQ_FALLING)
-
+    
     # Update the oled
     update_oled()
-
+    
     # Create an array to keep track of led statuses
     led_status = [False, False, False]
-
+    
     while True:
         for i in range(3):
-
             # If button is pressed and button_held index is False
             if buttons[i].value() == 0 and not button_held[i]:
-
                 led_status[i] = True
                 button_held[i] = True
                 leds[i].toggle()
                 update_oled()
-
+            
             # If button is not pressed and button_held index is True
             elif buttons[i].value() == 1 and button_held[i]:
                 button_held[i] = False
-
+            
             # If led_status index is true but led itself is off
             if led_status[i] == True and leds[i].value() == 0:
                 led_status[i] = False

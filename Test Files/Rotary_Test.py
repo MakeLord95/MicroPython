@@ -1,6 +1,18 @@
 # Import libaries
-from machine import Pin
+from machine import Pin, I2C
 import utime
+import ssd1306
+
+
+# Pins for OLED
+OLED_SCL = 15
+OLED_SDA = 14
+
+# Initialize I2C to use OLED
+i2c = I2C(1, scl=Pin(OLED_SCL), sda=Pin(OLED_SDA), freq=400000)
+OLED_WIDTH = 128
+OLED_HEIGHT = 64
+oled = ssd1306.SSD1306_I2C(OLED_WIDTH, OLED_HEIGHT, i2c)
 
 # Rotary coder Pins
 C_LEFT = 10
@@ -26,6 +38,9 @@ def decode(pin):
         i = i + 1
         b0 = b
     # Print the variable
+    oled.fill(0)
+    oled.text(str(i), 1, 1)
+    oled.show()
     print(i)
 
 
