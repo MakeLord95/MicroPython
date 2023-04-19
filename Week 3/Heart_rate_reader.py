@@ -41,7 +41,6 @@ def scale_signal(x):
     y = min(y, 64)
     return y
 
-n = 0
 
 while True:
     # Read the analog signal
@@ -63,9 +62,7 @@ while True:
     # Update line segment starting point
     x0 = x
     y0 = y
-    
-    n += 1
-    
+
     # Sleep for sampling period
     time.sleep(1 / fs)
 
