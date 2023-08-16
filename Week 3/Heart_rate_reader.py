@@ -26,7 +26,6 @@ peak_candidate = False
 while True:
     current_signal = buffer.get()
     # print(current_signal)
-    
     if current_signal > previous_signal:
         peak_time = time.ticks_ms()
         peak_candidate = True
@@ -50,5 +49,5 @@ while True:
         prev_peak_time = peak_time
 
     previous_signal = current_signal
-    
+
     time.sleep(1 / fs)

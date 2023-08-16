@@ -1,6 +1,6 @@
 import time
-import ssd1306
-from machine import Pin, PWM, I2C
+from machine import Pin, PWM
+from oled_utils import oled_setup
 
 
 # LED Brightness controller
@@ -35,6 +35,7 @@ def menu_switch(pin):
         pct = 0
         value = 0
         menu_active = "LED_Sel"
+        
 
     held = True
 
@@ -48,7 +49,7 @@ def led_select():
     global oled
 
     oled.fill(0)
-
+    
     oled.text("LED 1", 50, 5)
     oled.text("LED 2", 50, 15)
     oled.text("LED 3", 50, 25)
@@ -126,12 +127,12 @@ def decoder(pin):
 
                 pct = int((value / 108) * 100)
 
-    # Rotary is turned right
+    # Rotary is turned right 
     if i < 48:
         if right_value_0 != right_value:
             i += 1
             right_value_0 = right_value
-
+            
             if menu_active == "LED_Sel":
                 selected += 1
                 selected = max(selected, 1)
@@ -165,9 +166,9 @@ leds = [PWM(Pin(pin)) for pin in led_pins]
 for led in leds:
     led.duty_u16(0)
 
-# Create OLED variable
-i2c = I2C(1, scl=Pin(15), sda=Pin(14), freq=400000)
-oled = ssd1306.SSD1306_I2C(128, 64, i2c)
+# Create OLED using custom library
+oled = oled_setup()
+
 
 # A lot of required variables
 i = 0
@@ -193,3 +194,4 @@ while True:
         held = False
 
     time.sleep(1 / 250)
+    
